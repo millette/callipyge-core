@@ -1,40 +1,50 @@
-'use strict';
+'use strict'
 
+// const npm
 const Hapi = require('hapi')
-const Vision = require('vision')
-const LodashVision = require('lodash-vision')
 
-const server = new Hapi.Server()
+// const self
+const utils = require('./lib/utils')
 
-server.register(Vision, (err) => {
-  if (err) { throw err }
-  server.views({
-    engines: { html: LodashVision },
-    path: 'templates',
-    partialsPath: 'templates/partials',
-    helpersPath: 'templates/helpers',
-    isCached: false
+const defaultHandler = function (request, reply) {
+  reply({
+    serverKeys: Object.keys(request.server),
+    requestKeys: Object.keys(request),
+    replyKeys: Object.keys(reply),
+    serverInfo: request.server.info,
+    pre: request.pre,
+    params: request.params,
+    query: request.query
   })
+}
 
-/*
-  server.route({
-    method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      reply.view('allo', { str: 'Hello, world!' })
+module.exports = (init) => {
+  const server = new Hapi.Server()
+  const options = init.options || {}
+  const host = options.host || process.env.CALLIPYGE_HOST || 'localhost'
+  const port = options.port || process.env.CALLIPYGE_PORT || 6123
+
+  const running = () => {
+    console.log(`Server running at: ${server.info.uri}`)
+    return server
+  }
+
+  const fixRoute = (route) => {
+    if (typeof route === 'function') { route = { handler: route } }
+    if (typeof route === 'string') { route = { path: route, handler: init.options.defaultHandler || defaultHandler } }
+    if (!route.method) { route.method = 'GET' }
+    if (!route.path) { route.path = '/' }
+    return route
+  }
+
+  try {
+    utils.setupLodashVision(server, options.views)
+    server.connection({ port, host })
+    if (init.options.routes && init.options.routes.length) {
+      console.log(`Adding ${init.options.routes.length} routes.`)
+      server.route(init.options.routes.map(fixRoute))
     }
-  })
-*/
-})
-
-
-/*
-server.connection({ port: 3000, host: 'localhost' })
-
-server.start((err) => {
-  if (err) { throw err }
-  console.log(`Server running at: ${server.info.uri}`)
-})
-*/
-
-module.exports = server
+    if (typeof init === 'function') { init(server) }
+    return server.start().then(running)
+  } catch (e) { return Promise.reject(e) }
+}
