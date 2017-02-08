@@ -2,6 +2,9 @@
   "name": "callipyge-core",
   "version": "0.0.0",
   "main": "index.js",
+  "engines": {
+    "node": ">=6"
+  },
   "scripts": {
     "lint": "standard"
   },
@@ -9,7 +12,6 @@
     "glob": "^7.1.1",
     "hapi": "^16.1.0",
     "lodash-vision": "^0.2.0",
-    "pify": "^2.3.0",
     "vision": "^4.1.1"
   },
   "devDependencies": {

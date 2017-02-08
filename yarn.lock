@@ -810,7 +810,7 @@ pez@2.x.x:
     hoek "4.x.x"
     nigel "2.x.x"
 
-pify@^2.0.0, pify@^2.3.0:
+pify@^2.0.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
 
