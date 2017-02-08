@@ -1,9 +1,9 @@
 'use strict'
 
-// const npm
+// npm
 const Hapi = require('hapi')
 
-// const self
+// self
 const utils = require('./lib/utils')
 
 const defaultHandler = function (request, reply) {
@@ -19,8 +19,10 @@ const defaultHandler = function (request, reply) {
 }
 
 module.exports = (init) => {
+  if (!init) { init = { } }
   const server = new Hapi.Server()
-  const options = init.options || {}
+  if (!init.options) { init.options = {} }
+  const options = init.options
   const host = options.host || process.env.CALLIPYGE_HOST || 'localhost'
   const port = options.port || process.env.CALLIPYGE_PORT || 6123
 
@@ -40,10 +42,11 @@ module.exports = (init) => {
   try {
     utils.setupLodashVision(server, options.views)
     server.connection({ port, host })
-    if (init.options.routes && init.options.routes.length) {
-      console.log(`Adding ${init.options.routes.length} routes.`)
-      server.route(init.options.routes.map(fixRoute))
+    if (!init.options.routes || !init.options.routes.length) {
+      init.options.routes = ['/']
     }
+    console.log(`Adding ${init.options.routes.length} routes.`)
+    server.route(init.options.routes.map(fixRoute))
     if (typeof init === 'function') { init(server) }
     return server.start().then(running)
   } catch (e) { return Promise.reject(e) }
