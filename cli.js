@@ -16,12 +16,15 @@ const inquirer = require('inquirer')
 
 updateNotifier({ pkg }).notify()
 
-if (!process.argv[2] || !commands[process.argv[2]]) { commands.help() }
+if (process.argv.length < 3 || !commands[process.argv[2]]) { commands.help() }
 
 try {
-  const z = require('dotenv-safe').load({ sample: [__dirname, '.env.required'].join('/') })
-  console.log('Z:', z)
-  commands[process.argv[2]]()
+  require('dotenv-safe').load({ sample: [__dirname, '.env.required'].join('/') })
+  if (process.argv[3] === 'help') {
+    process.argv[3] = process.argv[2]
+    process.argv[2] = 'help'
+  }
+  commands[process.argv[2]](process.argv.slice(3))
 }
 catch (e) {
   if (e.name === 'MissingEnvVarsError') {
