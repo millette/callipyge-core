@@ -11,7 +11,6 @@ const cli = require('./lib/cli')
 require('update-notifier')({ pkg }).notify()
 
 if (process.argv.length < 3 || !commands[process.argv[2]]) {
-  console.log('help go 1')
   commands.help()
   process.exit(0)
 }
@@ -22,6 +21,5 @@ try {
     process.argv[3] = process.argv[2]
     process.argv[2] = 'help'
   }
-  console.log('cmd go 1')
   commands[process.argv[2]](process.argv.slice(3))
 } catch (e) { cli.mainCatch(e) }
