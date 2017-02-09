@@ -12,8 +12,10 @@
     "lint": "standard"
   },
   "dependencies": {
+    "dotenv-safe": "^4.0.3",
     "glob": "^7.1.1",
     "hapi": "^16.1.0",
+    "inquirer": "^3.0.1",
     "lodash-vision": "^0.2.0",
     "update-notifier": "^1.0.3",
     "vision": "^4.1.1"
