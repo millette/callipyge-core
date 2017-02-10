@@ -41,6 +41,10 @@ const defaultHandler = function (request, reply) {
 }
 
 const optionsSchema = joi.object({
+  cloudant: joi.object().keys({
+    public: joi.string(),
+    private: joi.string()
+  }),
   views: joi.object(),
   port: joi.number().integer().positive(),
   host: joi.string(),
@@ -51,9 +55,10 @@ const optionsSchema = joi.object({
 module.exports = (init) => {
   if (!init) { init = { } }
   const server = new Hapi.Server()
-  joi.assert(init.options, optionsSchema, 'Invalid options registering ' + pkg.name)
   if (!init.options) { init.options = {} }
-  // const options = init.options
+  if (!init.options.cloudant) { init.options.cloudant = {} }
+
+  joi.assert(init.options, optionsSchema, 'Invalid options registering ' + pkg.name)
   const host = init.options.host || process.env.CALLIPYGE_HOST || 'localhost'
   const port = init.options.port || process.env.CALLIPYGE_PORT || 6123
 
@@ -87,12 +92,12 @@ module.exports = (init) => {
         }
 
         init.options.routes.push({
-          path: '/public/{cloudant*}',
+          path: ['', init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
           handler: { cloudant: false }
         })
 
         init.options.routes.push({
-          path: '/private/{cloudant*}',
+          path: ['', init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
           handler: { cloudant: { auth: true } }
         })
 
