@@ -4,9 +4,12 @@
 const Hapi = require('hapi')
 const callipygeCloudant = require('callipyge-cloudant')
 const joi = require('joi')
+const lout = require('lout')
+const inert = require('inert')
 
 // self
 const pkg = require('./package.json')
+const utils = require('./lib/utils')
 
 try {
   require('dotenv-safe').load({ sample: [__dirname, '.env.required'].join('/') })
@@ -24,9 +27,6 @@ See ${e.sample} for details.
 `)
   process.exit(10)
 }
-
-// self
-const utils = require('./lib/utils')
 
 const defaultHandler = function (request, reply) {
   reply({
@@ -76,29 +76,33 @@ module.exports = (init) => {
   }
 
   try {
-    utils.setupLodashVision(server, init.options.views)
-    return server.register({
-      register: callipygeCloudant,
-      options: {
-        username: process.env.CLOUDANT_USERNAME,
-        password: process.env.CLOUDANT_PASSWORD,
-        dbName: process.env.CLOUDANT_DATABASE
-      }
-    })
+    server.connection({ port, host })
+    return utils.setupLodashVision(server, init.options.views)
       .then(() => {
-        server.connection({ port, host })
+        return server.register([
+          inert,
+          lout,
+          {
+            register: callipygeCloudant,
+            options: {
+              username: process.env.CLOUDANT_USERNAME,
+              password: process.env.CLOUDANT_PASSWORD,
+              dbName: process.env.CLOUDANT_DATABASE
+            }
+          }
+        ])
+      })
+      .then(() => {
         if (!init.options.routes || !init.options.routes.length) {
           init.options.routes = ['/']
         }
 
         init.options.routes.push({
-          method: '*',
           path: ['', init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
           handler: { cloudant: false }
         })
 
         init.options.routes.push({
-          method: '*',
           path: ['', init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
           handler: { cloudant: { auth: true } }
         })
