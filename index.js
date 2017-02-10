@@ -45,6 +45,8 @@ const optionsSchema = joi.object({
     public: joi.string(),
     private: joi.string()
   }),
+  lout: joi.object(),
+  inert: joi.object(),
   views: joi.object(),
   port: joi.number().integer().positive(),
   host: joi.string().hostname(),
@@ -80,8 +82,14 @@ module.exports = (init) => {
     return utils.setupLodashVision(server, init.options.views)
       .then(() => {
         return server.register([
-          inert,
-          lout,
+          {
+            register: inert,
+            options: init.options.inert
+          },
+          {
+            register: lout,
+            options: init.options.lout
+          },
           {
             register: callipygeCloudant,
             options: {
@@ -98,11 +106,15 @@ module.exports = (init) => {
         }
 
         init.options.routes.push({
+          // FIXME: should handle any http method but h2o2 complains
+          // method: '*',
           path: ['', init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
           handler: { cloudant: false }
         })
 
         init.options.routes.push({
+          // FIXME: should handle any http method but h2o2 complains
+          // method: '*',
           path: ['', init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
           handler: { cloudant: { auth: true } }
         })
