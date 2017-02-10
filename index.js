@@ -59,7 +59,6 @@ module.exports = (init) => {
 
   try {
     utils.setupLodashVision(server, options.views)
-
     return server.register({
       register: callipygeCloudant,
       options: {
@@ -73,12 +72,12 @@ module.exports = (init) => {
         if (!init.options.routes || !init.options.routes.length) {
           init.options.routes = ['/']
         }
-        console.log(`Adding ${init.options.routes.length} routes.`)
-        server.route(init.options.routes.map(fixRoute))
         if (typeof init === 'function') {
           console.log(`Initializing...`)
           init(server)
         }
+        console.log(`Adding ${init.options.routes.length} routes.`)
+        server.route(init.options.routes.map(fixRoute))
         return server.start()
       })
       .then(running)
