@@ -47,7 +47,7 @@ const optionsSchema = joi.object({
   }),
   views: joi.object(),
   port: joi.number().integer().positive(),
-  host: joi.string(),
+  host: joi.string().hostname(),
   defaultHandler: joi.func().arity(2),
   routes: joi.array()
 })
@@ -92,11 +92,13 @@ module.exports = (init) => {
         }
 
         init.options.routes.push({
+          method: '*',
           path: ['', init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
           handler: { cloudant: false }
         })
 
         init.options.routes.push({
+          method: '*',
           path: ['', init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
           handler: { cloudant: { auth: true } }
         })
