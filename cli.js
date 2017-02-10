@@ -16,7 +16,7 @@ if (process.argv.length < 3 || !commands[process.argv[2]]) {
 }
 
 try {
-  require('dotenv-safe').load({ sample: [__dirname, '.env.required'].join('/') })
+  require('dotenv-safe').load({ sample: [__dirname, '.env.cli'].join('/') })
   if (process.argv[3] === 'help') {
     process.argv[3] = process.argv[2]
     process.argv[2] = 'help'
