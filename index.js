@@ -63,9 +63,9 @@ module.exports = (init) => {
     return server.register({
       register: callipygeCloudant,
       options: {
-        username: process.env.CLOUDANT_USERNAME||'uname',
-        password: process.env.CLOUDANT_PASSWORD||'pw',
-        dbName: process.env.CLOUDANT_DATABASE||'db'
+        username: process.env.CLOUDANT_USERNAME,
+        password: process.env.CLOUDANT_PASSWORD,
+        dbName: process.env.CLOUDANT_DATABASE
       }
     })
       .then(() => {
