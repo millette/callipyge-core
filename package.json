@@ -18,6 +18,7 @@
     "got": "^6.7.1",
     "hapi": "^16.1.0",
     "inquirer": "^3.0.1",
+    "joi": "^10.2.2",
     "lodash-vision": "^0.2.0",
     "update-notifier": "^1.0.3",
     "vision": "^4.1.1"
