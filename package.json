@@ -12,6 +12,7 @@
     "lint": "standard"
   },
   "dependencies": {
+    "callipyge-cloudant": "file:///home/millette/callipyge-cloudant",
     "dotenv-safe": "^4.0.3",
     "glob": "^7.1.1",
     "got": "^6.7.1",
