@@ -2,6 +2,24 @@
 
 // npm
 const Hapi = require('hapi')
+const callipygeCloudant = require('callipyge-cloudant')
+
+try {
+  require('dotenv-safe').load({ sample: [__dirname, '.env.required'].join('/') })
+} catch (e) {
+  if (e.name !== 'MissingEnvVarsError') {
+    console.error(e)
+    process.exit(11)
+  }
+
+  console.error(`Missing environment variables:
+
+* ${e.missing.join('\n* ')}
+
+See ${e.sample} for details.
+`)
+  process.exit(10)
+}
 
 // self
 const utils = require('./lib/utils')
@@ -27,7 +45,7 @@ module.exports = (init) => {
   const port = options.port || process.env.CALLIPYGE_PORT || 6123
 
   const running = () => {
-    console.log(`Server running at: ${server.info.uri}`)
+    console.log(`Core is running at: ${server.info.uri}`)
     return server
   }
 
@@ -41,13 +59,29 @@ module.exports = (init) => {
 
   try {
     utils.setupLodashVision(server, options.views)
-    server.connection({ port, host })
-    if (!init.options.routes || !init.options.routes.length) {
-      init.options.routes = ['/']
-    }
-    console.log(`Adding ${init.options.routes.length} routes.`)
-    server.route(init.options.routes.map(fixRoute))
-    if (typeof init === 'function') { init(server) }
-    return server.start().then(running)
+
+    return server.register({
+      register: callipygeCloudant,
+      options: {
+        username: process.env.CLOUDANT_USERNAME||'uname',
+        password: process.env.CLOUDANT_PASSWORD||'pw',
+        dbName: process.env.CLOUDANT_DATABASE||'db'
+      }
+    })
+      .then(() => {
+        server.connection({ port, host })
+        if (!init.options.routes || !init.options.routes.length) {
+          init.options.routes = ['/']
+        }
+        console.log(`Adding ${init.options.routes.length} routes.`)
+        server.route(init.options.routes.map(fixRoute))
+        if (typeof init === 'function') {
+          console.log(`Initializing...`)
+          init(server)
+        }
+        return server.start()
+      })
+      .then(running)
+      .catch(console.error)
   } catch (e) { return Promise.reject(e) }
 }
