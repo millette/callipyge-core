@@ -1,5 +1,8 @@
 # README
 
+Callipyge is a simple tool to help you
+build and maintain beautiful backends.
+
 ## Step by step
 
 ```
