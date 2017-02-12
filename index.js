@@ -6,6 +6,7 @@ const callipygeCloudant = require('callipyge-cloudant')
 const joi = require('joi')
 const lout = require('lout')
 const inert = require('inert')
+const hapiPassword = require('hapi-password')
 
 // self
 const pkg = require('./package.json')
@@ -78,24 +79,39 @@ module.exports = (init) => {
     return route
   }
 
-  const register = () => server.register([
-    {
-      register: inert,
-      options: init.options.inert
-    },
-    {
-      register: lout,
-      options: init.options.lout
-    },
-    {
-      register: callipygeCloudant,
-      options: {
-        username: process.env.CLOUDANT_USERNAME,
-        password: process.env.CLOUDANT_PASSWORD,
-        dbName: process.env.CLOUDANT_DATABASE
-      }
+  const register = () => {
+    const authOptions = {
+      mode: false,
+      password: {}
     }
-  ])
+
+    authOptions.password[process.env.CLOUDANT_PASSWORD] = {
+      name: process.env.CLOUDANT_USERNAME
+    }
+
+    return server.register([
+      {
+        register: hapiPassword,
+        options: authOptions
+      },
+      {
+        register: inert,
+        options: init.options.inert
+      },
+      {
+        register: lout,
+        options: init.options.lout
+      },
+      {
+        register: callipygeCloudant,
+        options: {
+          username: process.env.CLOUDANT_USERNAME,
+          password: process.env.CLOUDANT_PASSWORD,
+          dbName: process.env.CLOUDANT_DATABASE
+        }
+      }
+    ])
+  }
 
   const initialize = () => {
     if (!init.options.routes || !init.options.routes.length) {
@@ -118,8 +134,26 @@ module.exports = (init) => {
 
     init.options.routes.push({
       path: 'admin',
+      config: {
+        auth: {
+          strategy: 'password',
+          mode: 'required'
+        }
+      },
       handler: { view: { template: 'admin' } }
     })
+
+/*
+    const authOptions = {
+      password: {}
+    }
+
+    authOptions.password[process.env.CLOUDANT_PASSWORD] = {
+      name: process.env.CLOUDANT_USERNAME
+    }
+
+    server.auth.strategy('pw', 'password', authOptions)
+*/
 
     if (typeof init === 'function') {
       console.log(`Initializing...`)
