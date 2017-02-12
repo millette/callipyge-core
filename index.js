@@ -74,60 +74,67 @@ module.exports = (init) => {
     if (typeof route === 'string') { route = { path: route, handler: init.options.defaultHandler || defaultHandler } }
     if (!route.method) { route.method = 'GET' }
     if (!route.path) { route.path = '/' }
+    if (route.path.slice(0, 1) !== '/') { route.path = '/' + route.path }
     return route
+  }
+
+  const register = () => server.register([
+    {
+      register: inert,
+      options: init.options.inert
+    },
+    {
+      register: lout,
+      options: init.options.lout
+    },
+    {
+      register: callipygeCloudant,
+      options: {
+        username: process.env.CLOUDANT_USERNAME,
+        password: process.env.CLOUDANT_PASSWORD,
+        dbName: process.env.CLOUDANT_DATABASE
+      }
+    }
+  ])
+
+  const initialize = () => {
+    if (!init.options.routes || !init.options.routes.length) {
+      init.options.routes = ['/']
+    }
+
+    init.options.routes.push({
+      // FIXME: should handle any http method but h2o2 complains
+      // method: '*',
+      path: ['', init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
+      handler: { cloudant: false }
+    })
+
+    init.options.routes.push({
+      // FIXME: should handle any http method but h2o2 complains
+      // method: '*',
+      path: ['', init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
+      handler: { cloudant: { auth: true } }
+    })
+
+    init.options.routes.push({
+      path: 'admin',
+      handler: { view: { template: 'admin' } }
+    })
+
+    if (typeof init === 'function') {
+      console.log(`Initializing...`)
+      init(server)
+    }
+    console.log(`Adding ${init.options.routes.length} routes.`)
+    server.route(init.options.routes.map(fixRoute))
+    return server.start()
   }
 
   try {
     server.connection({ port, host })
     return utils.setupLodashVision(server, init.options.views)
-      .then(() => {
-        return server.register([
-          {
-            register: inert,
-            options: init.options.inert
-          },
-          {
-            register: lout,
-            options: init.options.lout
-          },
-          {
-            register: callipygeCloudant,
-            options: {
-              username: process.env.CLOUDANT_USERNAME,
-              password: process.env.CLOUDANT_PASSWORD,
-              dbName: process.env.CLOUDANT_DATABASE
-            }
-          }
-        ])
-      })
-      .then(() => {
-        if (!init.options.routes || !init.options.routes.length) {
-          init.options.routes = ['/']
-        }
-
-        init.options.routes.push({
-          // FIXME: should handle any http method but h2o2 complains
-          // method: '*',
-          path: ['', init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
-          handler: { cloudant: false }
-        })
-
-        init.options.routes.push({
-          // FIXME: should handle any http method but h2o2 complains
-          // method: '*',
-          path: ['', init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
-          handler: { cloudant: { auth: true } }
-        })
-
-        if (typeof init === 'function') {
-          console.log(`Initializing...`)
-          init(server)
-        }
-        console.log(`Adding ${init.options.routes.length} routes.`)
-        server.route(init.options.routes.map(fixRoute))
-        return server.start()
-      })
+      .then(register)
+      .then(initialize)
       .then(running)
-      .catch(console.error)
   } catch (e) { return Promise.reject(e) }
 }
