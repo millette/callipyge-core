@@ -709,7 +709,7 @@ h2o2@^5.4.0:
     joi "9.X.X"
     wreck "9.X.X"
 
-handlebars@4.x.x:
+handlebars@4.x.x, handlebars@^4.0.5:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.6.tgz#2ce4484850537f9c97a8026d5399b935c4ed4ed7"
   dependencies:
@@ -719,7 +719,16 @@ handlebars@4.x.x:
   optionalDependencies:
     uglify-js "^2.6"
 
-hapi@^16.1.0:
+hapi-password@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/hapi-password/-/hapi-password-3.4.0.tgz#3b3f6e70724dab72ec7eb7483caa88e2bd62c98e"
+  dependencies:
+    handlebars "^4.0.5"
+    hapi "^16.0.2"
+    hoek "^4.0.1"
+    lodash "^4.13.1"
+
+hapi@^16.0.2, hapi@^16.1.0:
   version "16.1.0"
   resolved "https://registry.yarnpkg.com/hapi/-/hapi-16.1.0.tgz#419dd86347588821eb5a0a5f493bce019802d33b"
   dependencies:
@@ -756,7 +765,7 @@ heavy@4.x.x:
     hoek "4.x.x"
     joi "10.x.x"
 
-hoek@4.X.X, hoek@4.x.x:
+hoek@4.X.X, hoek@4.x.x, hoek@^4.0.1:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.1.0.tgz#4a4557460f69842ed463aa00628cc26d2683afa7"
 
@@ -1027,7 +1036,7 @@ lodash-vision@^0.2.0:
   dependencies:
     lodash "^4.17.4"
 
-lodash@^4.0.0, lodash@^4.17.4, lodash@^4.3.0:
+lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.4, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
