@@ -165,8 +165,9 @@ caller-path@^0.1.0:
   dependencies:
     callsites "^0.2.0"
 
-"callipyge-cloudant@file:///home/millette/callipyge-cloudant":
+"callipyge-cloudant@github:millette/callipyge-cloudant":
   version "0.0.0"
+  resolved "https://codeload.github.com/millette/callipyge-cloudant/tar.gz/df2e54b59e727a2a93bcf2db0fcf5278a3c8e55a"
   dependencies:
     h2o2 "^5.4.0"
     joi "^10.2.2"
@@ -719,9 +720,9 @@ handlebars@4.x.x, handlebars@^4.0.5:
   optionalDependencies:
     uglify-js "^2.6"
 
-hapi-password@^3.4.0:
+"hapi-password@github:millette/hapi-password#mode":
   version "3.4.0"
-  resolved "https://registry.yarnpkg.com/hapi-password/-/hapi-password-3.4.0.tgz#3b3f6e70724dab72ec7eb7483caa88e2bd62c98e"
+  resolved "https://codeload.github.com/millette/hapi-password/tar.gz/323cd4effb26c71c5783458817f0f821dd594e88"
   dependencies:
     handlebars "^4.0.5"
     hapi "^16.0.2"
