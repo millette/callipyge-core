@@ -31,7 +31,8 @@ See ${e.sample} for details.
 }
 
 const defaultHandler = function (request, reply) {
-  reply({
+  // console.log(Object.keys(request))
+  reply.view('default', {
     serverKeys: Object.keys(request.server),
     requestKeys: Object.keys(request),
     replyKeys: Object.keys(reply),
@@ -144,18 +145,6 @@ module.exports = (init) => {
       },
       handler: { view: { template: 'admin' } }
     })
-
-/*
-    const authOptions = {
-      password: {}
-    }
-
-    authOptions.password[process.env.CLOUDANT_PASSWORD] = {
-      name: process.env.CLOUDANT_USERNAME
-    }
-
-    server.auth.strategy('pw', 'password', authOptions)
-*/
 
     if (typeof init === 'function') {
       console.log(`Initializing...`)
