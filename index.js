@@ -146,6 +146,43 @@ module.exports = (init) => {
       handler: { view: { template: 'admin' } }
     })
 
+    init.options.routes.push({
+      path: 'admin/new/doc',
+      config: {
+        auth: {
+          strategy: 'password',
+          mode: 'required'
+        }
+      },
+      handler: { view: { template: 'new-doc' } }
+    })
+
+    init.options.routes.push({
+      path: 'admin/new',
+      config: {
+        auth: {
+          strategy: 'password',
+          mode: 'required'
+        }
+      },
+      handler: function (request, reply) {
+        reply.redirect('/admin/new/doc')
+      }
+    })
+
+    init.options.routes.push({
+      path: 'admin/new/',
+      config: {
+        auth: {
+          strategy: 'password',
+          mode: 'required'
+        }
+      },
+      handler: function (request, reply) {
+        reply.redirect('/admin/new/doc')
+      }
+    })
+
     if (typeof init === 'function') {
       console.log(`Initializing...`)
       init(server)
