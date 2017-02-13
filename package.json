@@ -24,7 +24,7 @@
     "joi": "^10.2.2",
     "lodash-vision": "^0.2.0",
     "lout": "^9.2.0",
-    "update-notifier": "^1.0.3",
+    "update-notifier": "^2.0.0",
     "vision": "^4.1.1"
   },
   "devDependencies": {
