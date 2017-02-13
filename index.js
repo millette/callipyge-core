@@ -7,6 +7,7 @@ const joi = require('joi')
 const lout = require('lout')
 const inert = require('inert')
 const hapiPassword = require('hapi-password')
+const hapiCredentials = require('hapi-context-credentials')
 
 // self
 const pkg = require('./package.json')
@@ -90,6 +91,7 @@ module.exports = (init) => {
     }
 
     return server.register([
+      hapiCredentials,
       {
         register: hapiPassword,
         options: authOptions
