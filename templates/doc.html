@@ -1,0 +1,10 @@
+<html lang="en">
+<%= partials.head(data) %>
+<body>
+<h1>Callipyge <small>doc</small></h1>
+<h2>Doc template</h2>
+<pre><%- JSON.stringify(data.pre.doc, null, '  ') %></pre>
+<p><a href="/admin">Admin</a></p>
+<pre><%- JSON.stringify(data, null, '  ') %></pre>
+</body>
+</html>
