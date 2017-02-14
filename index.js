@@ -117,16 +117,51 @@ module.exports = (init) => {
   }
 
   const initialize = () => {
-    const adminHandlers = function (tpl, request, reply) {
-      reply.view(tpl, { adminMenu: { active: request.url.pathname } })
+    const adminHandlers = function (tpl, ctx, request, reply) {
+      ctx.adminMenu = { active: request.url.pathname }
+      reply.view(tpl, ctx)
     }
 
-    const adminHandler = adminHandlers.bind(this, 'admin')
-    const adminNewDocHandler = adminHandlers.bind(this, 'newDoc')
+    const newDocSchema = joi.object({
+      _id: joi.string().allow(''),
+      title: joi.string().required(),
+      content: joi.string().allow('')
+    })
 
-    if (!init.options.routes || !init.options.routes.length) {
-      init.options.routes = ['/']
+    const adminHandler = adminHandlers.bind(this, 'admin', {})
+
+    const newDocPost = function (request, reply) {
+      console.log('Posting new doc...')
+      reply('yes')
     }
+
+    const adminNewDocHandler = function (request, reply) {
+      if (request.method === 'post') {
+        return reply({ what: 'Posting', payload: request.payload, so: request.pre.newDocPosted })
+      }
+      if (request.method === 'get') {
+        return adminHandlers('newDoc', {
+          formItems: [
+            {
+              label: 'Unique ID',
+              name: '_id'
+            },
+            {
+              label: 'Title',
+              name: 'title',
+              required: true
+            },
+            {
+              label: 'Content',
+              name: 'content',
+              type: 'textarea'
+            }
+          ]
+        }, request, reply)
+      }
+    }
+
+    if (!init.options.routes || !init.options.routes.length) { init.options.routes = ['/'] }
 
     init.options.routes.push({
       // FIXME: should handle any http method but h2o2 complains
@@ -156,6 +191,20 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'admin/new/doc',
       config: {
+        auth: {
+          strategy: 'password',
+          mode: 'required'
+        }
+      },
+      handler: adminNewDocHandler
+    })
+
+    init.options.routes.push({
+      method: 'post',
+      path: 'admin/new/doc',
+      config: {
+        pre: [{ method: newDocPost, assign: 'newDocPosted' }],
+        validate: { payload: newDocSchema },
         auth: {
           strategy: 'password',
           mode: 'required'
