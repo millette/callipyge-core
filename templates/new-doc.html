@@ -1,7 +1,5 @@
 <html>
-<head>
-<title>Callipyge</title>
-</head>
+<%= partials.head(data) %>
 <body>
 <h1>Callipyge <small>New doc</small></h1>
 <p>Allô <%- data.credentials.name %>.</p>
@@ -11,5 +9,10 @@
   <li class="active"><a href="/admin/new/doc">New doc</a></li>
   <li><a href="/logout">Logout</a></li>
 </ul>
+<form>
+<label>a <input type="text"></label>
+<label>b <input type="text"></label>
+<input type="submit">
+</form>
 </body>
 </html>
