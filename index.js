@@ -131,13 +131,12 @@ module.exports = (init) => {
     const adminHandler = adminHandlers.bind(this, 'admin', {})
 
     const newDocPost = function (request, reply) {
-      console.log('Posting new doc...')
-      reply('yes')
+      reply(server.methods.cloudant.post(true, request.payload))
     }
 
     const adminNewDocHandler = function (request, reply) {
       if (request.method === 'post') {
-        return reply({ what: 'Posting', payload: request.payload, so: request.pre.newDocPosted })
+        return reply.redirect(['', 'doc', request.pre.newDocPosted.id].join('/'))
       }
       if (request.method === 'get') {
         return adminHandlers('newDoc', {
@@ -166,16 +165,34 @@ module.exports = (init) => {
     init.options.routes.push({
       // FIXME: should handle any http method but h2o2 complains
       // method: '*',
-      path: ['', init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
+      path: [init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
       handler: { cloudant: false }
     })
 
     init.options.routes.push({
       // FIXME: should handle any http method but h2o2 complains
       // method: '*',
-      path: ['', init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
+      path: [init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
       handler: { cloudant: { auth: true } }
     })
+
+    const getDoc = function (request, reply) {
+      reply(
+        request.server.inject({ url: ['', 'private', request.params.docid].join('/') })
+          .then((a) => JSON.parse(a.payload))
+      )
+    }
+
+    init.options.routes.push({
+      path: 'doc/{docid}',
+      config: {
+        pre: [{ method: getDoc, assign: 'doc' }]
+      },
+      handler: function (request, reply) {
+        reply.view('doc', { pre: request.pre })
+      }
+    })
+
 
     init.options.routes.push({
       path: 'admin',
