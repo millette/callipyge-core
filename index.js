@@ -117,6 +117,13 @@ module.exports = (init) => {
   }
 
   const initialize = () => {
+    const adminHandlers = function (tpl, request, reply) {
+      reply.view(tpl, { adminMenu: { active: request.url.pathname } })
+    }
+
+    const adminHandler = adminHandlers.bind(this, 'admin')
+    const adminNewDocHandler = adminHandlers.bind(this, 'newDoc')
+
     if (!init.options.routes || !init.options.routes.length) {
       init.options.routes = ['/']
     }
@@ -143,7 +150,7 @@ module.exports = (init) => {
           mode: 'required'
         }
       },
-      handler: { view: { template: 'admin' } }
+      handler: adminHandler
     })
 
     init.options.routes.push({
@@ -154,7 +161,7 @@ module.exports = (init) => {
           mode: 'required'
         }
       },
-      handler: { view: { template: 'new-doc' } }
+      handler: adminNewDocHandler
     })
 
     init.options.routes.push({

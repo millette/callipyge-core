@@ -1,0 +1,6 @@
+<ul class="menu vertical">
+  <li><a href="/">Home</a></li>
+  <li<%= data.adminMenu.active === '/admin' ? ' class="active"' : '' %>><a href="/admin">Admin</a></li>
+  <li<%= data.adminMenu.active === '/admin/new/doc' ? ' class="active"' : '' %>><a href="/admin/new/doc">New doc</a></li>
+  <li><a href="/logout">Logout</a></li>
+</ul>
