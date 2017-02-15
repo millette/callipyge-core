@@ -1,0 +1,9 @@
+<html lang="en">
+<%= partials.head(data) %>
+<body>
+<h1>Callipyge</h1>
+<p>Allô <%- data.credentials.name %>.</p>
+<%= partials.adminMenu(data) %>
+<pre><%- JSON.stringify(data, null, '  ') %></pre>
+</body>
+</html>
