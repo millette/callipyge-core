@@ -32,8 +32,9 @@ See ${e.sample} for details.
 }
 
 const defaultHandler = function (request, reply) {
-  // console.log(Object.keys(request))
-  reply.view('default', {
+  if (!request.query.debug) { return reply.view('default') }
+
+  const obj = {
     serverKeys: Object.keys(request.server),
     requestKeys: Object.keys(request),
     replyKeys: Object.keys(reply),
@@ -41,7 +42,8 @@ const defaultHandler = function (request, reply) {
     pre: request.pre,
     params: request.params,
     query: request.query
-  })
+  }
+  reply.view('default', obj)
 }
 
 const optionsSchema = joi.object({

@@ -2,7 +2,9 @@
 <%= partials.head(data) %>
 <body>
 <h1>Callipyge</h1>
-<h2>Default template</h2>
+<% if (!data.query || !!data.query.debug) { %>
+<h2>Default template <a href="?debug=true"><small>debug</small></a></h2>
+<% } %>
 <p><a href="/admin">Admin</a></p>
 <pre><%- JSON.stringify(data, null, '  ') %></pre>
 </body>
