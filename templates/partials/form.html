@@ -12,5 +12,9 @@
     <% } %>
   <% } %>
 <% }) %>
-<input type="submit">
+<button type="submit" name="action" value="edit"><%- data.edit ? 'Edit' : 'Create' %></button>
+<% if (data.edit) { %>
+  <button type="submit" name="action" value="delete">Delete</button>
+  <button type="submit" name="action" value="copy">Copy</button>
+<% } %>
 </form>

@@ -132,6 +132,7 @@ module.exports = (init) => {
 
     const newDocSchema = joi.object({
       _id: joi.string().allow(''),
+      action: joi.string().required(),
       title: joi.string().required(),
       content: joi.string().allow('')
     })
@@ -139,6 +140,7 @@ module.exports = (init) => {
     const docSchema = joi.object({
       _rev: joi.string().required(),
       _id: joi.string().required(),
+      action: joi.string().required(),
       title: joi.string().required(),
       content: joi.string().allow('')
     })
@@ -150,19 +152,36 @@ module.exports = (init) => {
     const adminHandler = adminHandlers.bind(this, 'admin', {})
 
     const newDocPost = function (request, reply) {
-      request.payload.updatedAt = new Date().toISOString()
-      request.payload.createdAt = request.pre.doc && request.pre.doc.createdAt || request.payload.updatedAt
-
       if (!request.payload._id) {
         request.payload._id = utils.slug(request.payload.title)
       }
 
-      reply(server.methods.cloudant.post(true, request.payload))
+      if (request.payload.action === 'copy') {
+        reply({ copy: request.payload._id })
+      } else if (request.payload.action === 'delete') {
+        console.log('must implement delete')
+        reply({ 'delete': request.payload._id })
+      } else {
+        delete request.payload.action
+        request.payload.updatedAt = new Date().toISOString()
+        request.payload.createdAt = request.pre.doc && request.pre.doc.createdAt || request.payload.updatedAt
+        reply(server.methods.cloudant.post(true, request.payload))
+      }
     }
 
     const adminNewDocHandler = function (request, reply) {
       if (request.method === 'post') {
-        return reply.redirect(['', 'doc', request.pre.newDocPosted.id].join('/'))
+        if (request.pre.newDocPosted.id) {
+          return reply.redirect(['', 'doc', request.pre.newDocPosted.id].join('/'))
+        }
+
+        if (request.pre.newDocPosted.copy) {
+          return reply.redirect('/admin/new/doc?from=' + request.pre.newDocPosted.copy)
+        }
+
+        if (request.pre.newDocPosted.delete) {
+          return reply.redirect(['', 'admin', 'delete', request.pre.newDocPosted.delete].join('/'))
+        }
       }
       if (request.method === 'get') {
         const context = {}
@@ -184,11 +203,13 @@ module.exports = (init) => {
         ]
 
         if (request.pre.doc) {
-          context.edit = true
-          formItems.push({
-            name: '_rev',
-            type: 'hidden'
-          })
+          if (request.pre.doc._rev) {
+            context.edit = true
+            formItems.push({
+              name: '_rev',
+              type: 'hidden'
+            })
+          }
 
           formItems.map((item) => {
             if (request.pre.doc[item.name] !== undefined) {
@@ -205,12 +226,24 @@ module.exports = (init) => {
 
     // FIXME: somehow move into callipyge-cloudant?
     const getDoc = function (request, reply) {
+      // console.log('payload get:', request.payload)
+      if (!request.params.docid && !request.query.from) {
+        return reply({})
+      }
+
       reply(
-        request.server.inject({ url: ['', 'private', request.params.docid].join('/') })
-          .then((a) => a.statusCode > 100 && a.statusCode < 400
-            ? a.result
-            : boom.create(a.statusCode, a.result.reason, a.result)
-          )
+        request.server.inject({ url: ['', 'private', request.params.docid || request.query.from].join('/') })
+          .then((a) => {
+            if (a.statusCode <= 100 || a.statusCode >= 400) {
+              return boom.create(a.statusCode, a.result.reason, a.result)
+            }
+            if (request.query.from) {
+              delete a.result._id
+              delete a.result._rev
+              a.result.title = 'Copy of ' + a.result.title
+            }
+            return a.result
+          })
       )
     }
 
@@ -273,7 +306,10 @@ module.exports = (init) => {
 
     init.options.routes.push({
       path: 'admin/new/doc',
-      config: { auth },
+      config: {
+        pre: [{ method: getDoc, assign: 'doc' }],
+        auth: auth
+      },
       handler: adminNewDocHandler
     })
 
