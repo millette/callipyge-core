@@ -1,9 +1,17 @@
 <html lang="en">
 <%= partials.head(data) %>
 <body>
-<h1>Callipyge</h1>
+<h1>Callipyge <small>content</small></h1>
 <p>Allô <%- data.credentials.name %>.</p>
 <%= partials.adminMenu(data) %>
-<pre><%- JSON.stringify(data, null, '  ') %></pre>
+<h2>All docs</h2>
+<% data.pre.docs.forEach((doc) => { %>
+<div>
+  <h3><a href="/doc/<%- doc._id %>"><%- doc.title %> <small><%- doc._rev %></small></a></h3>
+  <div>
+    <%= doc.content || '<i>No content yet.</i>' %>
+  </div>
+</div>
+<% }) %>
 </body>
 </html>
