@@ -130,6 +130,12 @@ module.exports = (init) => {
       reply.view(tpl, ctx)
     }
 
+    const newDocSchema = joi.object({
+      _id: joi.string().allow(''),
+      title: joi.string().required(),
+      content: joi.string().allow('')
+    })
+
     const docSchema = joi.object({
       _rev: joi.string().allow(''),
       _id: joi.string().allow(''),
@@ -144,6 +150,8 @@ module.exports = (init) => {
     const adminHandler = adminHandlers.bind(this, 'admin', {})
 
     const newDocPost = function (request, reply) {
+      request.payload.updatedAt = new Date().toISOString()
+      request.payload.createdAt = request.pre.doc && request.pre.doc.createdAt || request.payload.updatedAt
       reply(server.methods.cloudant.post(true, request.payload))
     }
 
@@ -269,7 +277,7 @@ module.exports = (init) => {
       path: 'admin/new/doc',
       config: {
         pre: [{ method: newDocPost, assign: 'newDocPosted' }],
-        validate: { payload: docSchema },
+        validate: { payload: newDocSchema },
         auth: auth
       },
       handler: adminNewDocHandler
@@ -288,7 +296,10 @@ module.exports = (init) => {
       method: 'post',
       path: 'admin/edit/{docid}',
       config: {
-        pre: [{ method: newDocPost, assign: 'newDocPosted' }],
+        pre: [
+          { method: getDoc, assign: 'doc' },
+          { method: newDocPost, assign: 'newDocPosted' }
+        ],
         validate: { payload: docSchema },
         auth: auth
       },

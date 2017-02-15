@@ -1,15 +1,16 @@
 <form method="post">
 <% data.formItems && _(data.formItems).each((item) => { %>
-<% if (item.type === 'textarea') { %>
-<h3><%- item.label %></h3>
-<textarea name="<%- item.name %>"><%- item.value || '' %></textarea>
-<% } else { %>
-<% if (item.name === '_id' && item.value) { %>
-<h3><%- item.value %> <small><%- item.label %></small></h3>
-<% } else { %>
-<label><%- item.label %> <input type="<%- item.type  || 'text' %>" name="<%- item.name %>" value="<%- item.value === undefined ? '' : item.value %>"<%- item.required ? ' required' : '' %>></label>
-<% } %>
-<% } %>
+  <% if (item.type === 'textarea') { %>
+    <h3><%- item.label %></h3>
+    <textarea name="<%- item.name %>"><%- item.value || '' %></textarea>
+  <% } else { %>
+    <% if (item.name === '_id' && item.value) { %>
+      <h3><%- item.value %> <small><%- item.label %></small></h3>
+      <input type="hidden" name="_id" value="<%- item.value %>" required>
+    <% } else { %>
+      <label><%- item.label %> <input type="<%- item.type  || 'text' %>" name="<%- item.name %>" value="<%- item.value === undefined ? '' : item.value %>"<%- item.required ? ' required' : '' %>></label>
+    <% } %>
+  <% } %>
 <% }) %>
 <input type="submit">
 </form>

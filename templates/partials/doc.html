@@ -14,6 +14,14 @@
       <%- data.doc.title %> <small><%- data.doc._rev %></small>
     </h2>
   <% } %>
+  <dl>
+    <% if (data.doc.createdAt) { %>
+    <dt>Created at</dt><dd><%- data.doc.createdAt %></dd>
+    <% } %>
+    <% if (data.doc.updatedAt) { %>
+    <dt>Updated at</dt><dd><%- data.doc.updatedAt %></dd>
+    <% } %>
+  </dl>
   <div>
     <%= data.doc.content || '<i>No content yet.</i>' %>
   </div>
