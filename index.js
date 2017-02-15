@@ -9,6 +9,7 @@ const inert = require('inert')
 const boom = require('boom')
 const hapiPassword = require('hapi-password')
 const hapiCredentials = require('hapi-context-credentials')
+const hapiError = require('hapi-error')
 
 // self
 const pkg = require('./package.json')
@@ -96,6 +97,10 @@ module.exports = (init) => {
 
     return server.register([
       hapiCredentials,
+      {
+        register: hapiError,
+        options: { templateName: 'error' }
+      },
       {
         register: hapiPassword,
         options: authOptions
