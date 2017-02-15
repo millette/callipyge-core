@@ -147,6 +147,7 @@ module.exports = (init) => {
         return reply.redirect(['', 'doc', request.pre.newDocPosted.id].join('/'))
       }
       if (request.method === 'get') {
+        const context = {}
         const formItems = [
           {
             label: 'Unique ID',
@@ -165,6 +166,7 @@ module.exports = (init) => {
         ]
 
         if (request.pre.doc) {
+          context.edit = true
           formItems.push({
             name: '_rev',
             type: 'hidden'
@@ -178,7 +180,8 @@ module.exports = (init) => {
           })
         }
 
-        return adminHandlers('newDoc', { formItems }, request, reply)
+        context.formItems = formItems
+        return adminHandlers('newDoc', context, request, reply)
       }
     }
 

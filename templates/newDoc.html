@@ -1,7 +1,7 @@
 <html lang="en">
 <%= partials.head(data) %>
 <body>
-<h1>Callipyge <small>New doc</small></h1>
+<h1>Callipyge <small><%- data.edit ? 'edit' : 'new doc' %></small></h1>
 <p>Allô <%- data.credentials.name %>.</p>
 <%= partials.adminMenu(data) %>
 <%= partials.form(data) %>
