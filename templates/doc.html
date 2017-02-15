@@ -1,10 +1,8 @@
 <html lang="en">
 <%= partials.head(data) %>
 <body>
-<h1>Callipyge <small>doc</small></h1>
-<h2>Doc template</h2>
-<pre><%- JSON.stringify(data.pre.doc, null, '  ') %></pre>
+<h1><a href="/">Callipyge</a> <small>doc</small></h1>
+<%= partials.doc({ doc: data.pre.doc }) %>
 <p><a href="/admin">Admin</a></p>
-<pre><%- JSON.stringify(data, null, '  ') %></pre>
 </body>
 </html>

@@ -6,12 +6,7 @@
 <%= partials.adminMenu(data) %>
 <h2>All docs</h2>
 <% data.pre.docs.forEach((doc) => { %>
-<div>
-  <h3><a href="/doc/<%- doc._id %>"><%- doc.title %> <small><%- doc._rev %></small></a></h3>
-  <div>
-    <%= doc.content || '<i>No content yet.</i>' %>
-  </div>
-</div>
+<%= partials.doc({ doc: doc, teaser: true, credentials: data.credentials }) %>
 <% }) %>
 </body>
 </html>
