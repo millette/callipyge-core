@@ -152,11 +152,11 @@ module.exports = (init) => {
     const newDocPost = function (request, reply) {
       request.payload.updatedAt = new Date().toISOString()
       request.payload.createdAt = request.pre.doc && request.pre.doc.createdAt || request.payload.updatedAt
-/*
+
       if (!request.payload._id) {
-        request.payload._id = XX(request.payload.title)
+        request.payload._id = utils.slug(request.payload.title)
       }
-*/
+
       reply(server.methods.cloudant.post(true, request.payload))
     }
 
