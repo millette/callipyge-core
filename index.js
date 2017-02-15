@@ -6,6 +6,7 @@ const callipygeCloudant = require('callipyge-cloudant')
 const joi = require('joi')
 const lout = require('lout')
 const inert = require('inert')
+const boom = require('boom')
 const hapiPassword = require('hapi-password')
 const hapiCredentials = require('hapi-context-credentials')
 
@@ -128,6 +129,10 @@ module.exports = (init) => {
       content: joi.string().allow('')
     })
 
+    const adminContentHandler = function (request, reply) {
+      return adminHandlers('allDocs', { pre: request.pre }, request, reply)
+    }
+
     const adminHandler = adminHandlers.bind(this, 'admin', {})
 
     const newDocPost = function (request, reply) {
@@ -160,6 +165,33 @@ module.exports = (init) => {
       }
     }
 
+    // FIXME: somehow move into callipyge-cloudant?
+    const getDoc = function (request, reply) {
+      reply(
+        request.server.inject({ url: ['', 'private', request.params.docid].join('/') })
+          .then((a) => a.statusCode > 100 && a.statusCode < 400
+            ? a.result
+            : boom.create(a.statusCode, a.result.reason, a.result)
+          )
+      )
+    }
+
+    // FIXME: somehow move into callipyge-cloudant?
+    const getAllDocs = function (request, reply) {
+      reply(
+        request.server.inject({ url: '/private/_all_docs?include_docs=true&only=docs' })
+          .then((a) => a.statusCode > 100 && a.statusCode < 400
+            ? a.result
+            : boom.create(a.statusCode, a.result.reason, a.result)
+          )
+      )
+    }
+
+    const auth = {
+      strategy: 'password',
+      mode: 'required'
+    }
+
     if (!init.options.routes || !init.options.routes.length) { init.options.routes = ['/'] }
 
     init.options.routes.push({
@@ -176,13 +208,6 @@ module.exports = (init) => {
       handler: { cloudant: { auth: true } }
     })
 
-    const getDoc = function (request, reply) {
-      reply(
-        request.server.inject({ url: ['', 'private', request.params.docid].join('/') })
-          .then((a) => JSON.parse(a.payload))
-      )
-    }
-
     init.options.routes.push({
       path: 'doc/{docid}',
       config: {
@@ -193,26 +218,24 @@ module.exports = (init) => {
       }
     })
 
-
     init.options.routes.push({
       path: 'admin',
-      config: {
-        auth: {
-          strategy: 'password',
-          mode: 'required'
-        }
-      },
+      config: { auth },
       handler: adminHandler
     })
 
     init.options.routes.push({
-      path: 'admin/new/doc',
+      path: 'admin/content',
       config: {
-        auth: {
-          strategy: 'password',
-          mode: 'required'
-        }
+        auth: auth,
+        pre: [{ method: getAllDocs, assign: 'docs' }]
       },
+      handler: adminContentHandler
+    })
+
+    init.options.routes.push({
+      path: 'admin/new/doc',
+      config: { auth },
       handler: adminNewDocHandler
     })
 
@@ -222,22 +245,14 @@ module.exports = (init) => {
       config: {
         pre: [{ method: newDocPost, assign: 'newDocPosted' }],
         validate: { payload: newDocSchema },
-        auth: {
-          strategy: 'password',
-          mode: 'required'
-        }
+        auth: auth
       },
       handler: adminNewDocHandler
     })
 
     init.options.routes.push({
       path: 'admin/new',
-      config: {
-        auth: {
-          strategy: 'password',
-          mode: 'required'
-        }
-      },
+      config: { auth },
       handler: function (request, reply) {
         reply.redirect('/admin/new/doc')
       }
@@ -245,12 +260,7 @@ module.exports = (init) => {
 
     init.options.routes.push({
       path: 'admin/new/',
-      config: {
-        auth: {
-          strategy: 'password',
-          mode: 'required'
-        }
-      },
+      config: { auth },
       handler: function (request, reply) {
         reply.redirect('/admin/new/doc')
       }
