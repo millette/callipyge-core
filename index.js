@@ -125,7 +125,8 @@ module.exports = (init) => {
       reply.view(tpl, ctx)
     }
 
-    const newDocSchema = joi.object({
+    const docSchema = joi.object({
+      _rev: joi.string().allow(''),
       _id: joi.string().allow(''),
       title: joi.string().required(),
       content: joi.string().allow('')
@@ -146,24 +147,38 @@ module.exports = (init) => {
         return reply.redirect(['', 'doc', request.pre.newDocPosted.id].join('/'))
       }
       if (request.method === 'get') {
-        return adminHandlers('newDoc', {
-          formItems: [
-            {
-              label: 'Unique ID',
-              name: '_id'
-            },
-            {
-              label: 'Title',
-              name: 'title',
-              required: true
-            },
-            {
-              label: 'Content',
-              name: 'content',
-              type: 'textarea'
+        const formItems = [
+          {
+            label: 'Unique ID',
+            name: '_id'
+          },
+          {
+            label: 'Title',
+            name: 'title',
+            required: true
+          },
+          {
+            label: 'Content',
+            name: 'content',
+            type: 'textarea'
+          }
+        ]
+
+        if (request.pre.doc) {
+          formItems.push({
+            name: '_rev',
+            type: 'hidden'
+          })
+
+          formItems.map((item) => {
+            if (request.pre.doc[item.name] !== undefined) {
+              item.value = request.pre.doc[item.name]
             }
-          ]
-        }, request, reply)
+            return item
+          })
+        }
+
+        return adminHandlers('newDoc', { formItems }, request, reply)
       }
     }
 
@@ -246,7 +261,27 @@ module.exports = (init) => {
       path: 'admin/new/doc',
       config: {
         pre: [{ method: newDocPost, assign: 'newDocPosted' }],
-        validate: { payload: newDocSchema },
+        validate: { payload: docSchema },
+        auth: auth
+      },
+      handler: adminNewDocHandler
+    })
+
+    init.options.routes.push({
+      path: 'admin/edit/{docid}',
+      config: {
+        pre: [{ method: getDoc, assign: 'doc' }],
+        auth: auth
+      },
+      handler: adminNewDocHandler
+    })
+
+    init.options.routes.push({
+      method: 'post',
+      path: 'admin/edit/{docid}',
+      config: {
+        pre: [{ method: newDocPost, assign: 'newDocPosted' }],
+        validate: { payload: docSchema },
         auth: auth
       },
       handler: adminNewDocHandler

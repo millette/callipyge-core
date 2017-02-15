@@ -2,9 +2,9 @@
 <% data.formItems && _(data.formItems).each((item) => { %>
 <% if (item.type === 'textarea') { %>
 <h3><%- item.label %></h3>
-<textarea name="<%- item.name %>"></textarea>
+<textarea name="<%- item.name %>"><%- item.value || '' %></textarea>
 <% } else { %>
-<label><%- item.label %> <input type="text" name="<%- item.name %>" value="<%- item.value === undefined ? '' : item.value %>"<%- item.required ? ' required' : '' %>></label>
+<label><%- item.label %> <input type="<%- item.type  || 'text' %>" name="<%- item.name %>" value="<%- item.value === undefined ? '' : item.value %>"<%- item.required ? ' required' : '' %>></label>
 <% } %>
 <% }) %>
 <input type="submit">
