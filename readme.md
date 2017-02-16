@@ -24,4 +24,3 @@ yarn callipyge init
 Notice a new .env file in your project root. Make sure there's also
 a .env line in your .gitignore file to prevent it from being shared.
 **This .env file contains your cloudant username and password.**
-
