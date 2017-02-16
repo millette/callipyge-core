@@ -9,6 +9,12 @@
   "engines": {
     "node": ">=6"
   },
+  "repository": "millette/callipyge-core",
+  "author": {
+    "name": "Robin Millette",
+    "email": "robin@millette.info",
+    "url": "http://robin.millette.info"
+  },
   "scripts": {
     "lint": "standard"
   },
