@@ -163,9 +163,9 @@ caller-path@^0.1.0:
   dependencies:
     callsites "^0.2.0"
 
-callipyge-cloudant@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/callipyge-cloudant/-/callipyge-cloudant-0.1.0.tgz#1a9e6302f0dd0053db3e04a329d2fa564bd36b69"
+callipyge-cloudant@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/callipyge-cloudant/-/callipyge-cloudant-0.1.1.tgz#923083cf618ca5c2da6196aeb2d266f7cfc8f991"
   dependencies:
     boom "^4.2.0"
     got "^6.7.1"
