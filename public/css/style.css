@@ -1,0 +1,13 @@
+label {
+  display: block;
+}
+
+.menu > li.active > a {
+  font-weight: bold;
+  font-size: 90%;
+}
+
+textarea {
+  width: 100%;
+  min-height: 10em;
+}

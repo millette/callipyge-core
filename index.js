@@ -266,6 +266,21 @@ module.exports = (init) => {
     if (!init.options.routes || !init.options.routes.length) { init.options.routes = ['/'] }
 
     init.options.routes.push({
+      path: 'assets/{path*}',
+      handler: {
+        directory: {
+          index: false,
+          lookupCompressed: true,
+          etagMethod: 'simple',
+          path: [
+            [process.cwd(), 'public'].join('/'),
+            [__dirname, 'public'].join('/')
+          ]
+        }
+      }
+    })
+
+    init.options.routes.push({
       // FIXME: should handle any http method but h2o2 complains
       // method: '*',
       path: [init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
