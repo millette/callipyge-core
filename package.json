@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "main": "index.js",
   "bin": {
-    "callipyge": "cli.js"
+    "callipyge": "cli.js",
+    "now-deploy": "scripts/now-deploy-env.sh"
   },
   "engines": {
     "node": ">=6"
