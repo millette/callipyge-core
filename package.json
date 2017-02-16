@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "boom": "^4.2.0",
-    "callipyge-cloudant": "github:millette/callipyge-cloudant",
+    "callipyge-cloudant": "^0.1.0",
     "dotenv-safe": "^4.0.3",
     "glob": "^7.1.1",
     "got": "^6.7.1",
