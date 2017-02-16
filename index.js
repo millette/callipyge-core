@@ -165,7 +165,7 @@ module.exports = (init) => {
         delete request.payload.action
         request.payload.updatedAt = new Date().toISOString()
         request.payload.createdAt = request.pre.doc && request.pre.doc.createdAt || request.payload.updatedAt
-        reply(server.methods.cloudant.post(true, request.payload))
+        reply(server.methods.cloudant.post(request.payload, true))
       }
     }
 
