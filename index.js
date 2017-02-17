@@ -62,6 +62,15 @@ module.exports = (init) => {
   const server = new Hapi.Server()
   if (!init.options) { init.options = {} }
 
+  if (!init.options.lout) {
+    init.options.lout = {
+      auth: {
+        strategy: 'password',
+        mode: 'required'
+      }
+    }
+  }
+
   joi.assert(init.options, optionsSchema, 'Invalid options registering ' + pkg.name)
   const host = init.options.host || process.env.CALLIPYGE_HOST || 'localhost'
   const port = init.options.port || process.env.CALLIPYGE_PORT || 6123
