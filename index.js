@@ -48,10 +48,6 @@ const defaultHandler = function (request, reply) {
 }
 
 const optionsSchema = joi.object({
-  cloudant: joi.object().keys({
-    public: joi.string(),
-    private: joi.string()
-  }),
   lout: joi.object(),
   inert: joi.object(),
   views: joi.object(),
@@ -65,7 +61,6 @@ module.exports = (init) => {
   if (!init) { init = { } }
   const server = new Hapi.Server()
   if (!init.options) { init.options = {} }
-  if (!init.options.cloudant) { init.options.cloudant = {} }
 
   joi.assert(init.options, optionsSchema, 'Invalid options registering ' + pkg.name)
   const host = init.options.host || process.env.CALLIPYGE_HOST || 'localhost'
@@ -224,40 +219,6 @@ module.exports = (init) => {
       }
     }
 
-    // FIXME: somehow move into callipyge-cloudant?
-    const getDoc = function (request, reply) {
-      // console.log('payload get:', request.payload)
-      if (!request.params.docid && !request.query.from) {
-        return reply({})
-      }
-
-      reply(
-        request.server.inject({ url: ['', 'private', request.params.docid || request.query.from].join('/') })
-          .then((a) => {
-            if (a.statusCode <= 100 || a.statusCode >= 400) {
-              return boom.create(a.statusCode, a.result.reason, a.result)
-            }
-            if (request.query.from) {
-              delete a.result._id
-              delete a.result._rev
-              a.result.title = 'Copy of ' + a.result.title
-            }
-            return a.result
-          })
-      )
-    }
-
-    // FIXME: somehow move into callipyge-cloudant?
-    const getAllDocs = function (request, reply) {
-      reply(
-        request.server.inject({ url: '/private/_all_docs?include_docs=true&only=docs' })
-          .then((a) => a.statusCode > 100 && a.statusCode < 400
-            ? a.result
-            : boom.create(a.statusCode, a.result.reason, a.result)
-          )
-      )
-    }
-
     const auth = {
       strategy: 'password',
       mode: 'required'
@@ -281,23 +242,9 @@ module.exports = (init) => {
     })
 
     init.options.routes.push({
-      // FIXME: should handle any http method but h2o2 complains
-      // method: '*',
-      path: [init.options.cloudant.public || 'public', '{cloudant*}'].join('/'),
-      handler: { cloudant: false }
-    })
-
-    init.options.routes.push({
-      // FIXME: should handle any http method but h2o2 complains
-      // method: '*',
-      path: [init.options.cloudant.private || 'private', '{cloudant*}'].join('/'),
-      handler: { cloudant: { auth: true } }
-    })
-
-    init.options.routes.push({
       path: 'doc/{docid}',
       config: {
-        pre: [{ method: getDoc, assign: 'doc' }]
+        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }]
       },
       handler: function (request, reply) {
         reply.view('doc', { pre: request.pre })
@@ -314,7 +261,7 @@ module.exports = (init) => {
       path: 'admin/content',
       config: {
         auth: auth,
-        pre: [{ method: getAllDocs, assign: 'docs' }]
+        pre: [{ method: server.methods.cloudant.getAllDocs, assign: 'docs' }]
       },
       handler: adminContentHandler
     })
@@ -322,7 +269,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'admin/new/doc',
       config: {
-        pre: [{ method: getDoc, assign: 'doc' }],
+        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }],
         auth: auth
       },
       handler: adminNewDocHandler
@@ -342,7 +289,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'admin/edit/{docid}',
       config: {
-        pre: [{ method: getDoc, assign: 'doc' }],
+        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }],
         auth: auth
       },
       handler: adminNewDocHandler
@@ -353,7 +300,7 @@ module.exports = (init) => {
       path: 'admin/edit/{docid}',
       config: {
         pre: [
-          { method: getDoc, assign: 'doc' },
+          { method: server.methods.cloudant.getDoc, assign: 'doc' },
           { method: newDocPost, assign: 'newDocPosted' }
         ],
         validate: { payload: docSchema },
