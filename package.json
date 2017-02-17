@@ -4,7 +4,8 @@
   "main": "index.js",
   "bin": {
     "callipyge": "cli.js",
-    "now-deploy": "scripts/now-deploy-env.sh"
+    "now-deploy": "scripts/now-deploy-env.sh",
+    "sass": "scripts/sass.sh"
   },
   "engines": {
     "node": ">=6"
@@ -16,10 +17,13 @@
     "url": "http://robin.millette.info"
   },
   "scripts": {
-    "sass": "node-sass --include-path node_modules/foundation-sites/scss --output public/css scss/style.scss",
+    "sass": "sass",
+    "sass-old": "node-sass --include-path node_modules/foundation-sites/scss --output public/css scss/style.scss",
     "lint": "standard"
   },
   "dependencies": {
+    "foundation-sites": "^6.3.0",
+    "node-sass": "^4.5.0",
     "boom": "^4.2.0",
     "callipyge-cloudant": "^0.1.1",
     "dotenv-safe": "^4.0.3",
@@ -38,8 +42,6 @@
     "vision": "^4.1.1"
   },
   "devDependencies": {
-    "foundation-sites": "^6.3.0",
-    "node-sass": "^4.5.0",
     "standard": "^8.6.0"
   }
 }
