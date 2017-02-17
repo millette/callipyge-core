@@ -16,8 +16,7 @@
     "url": "http://robin.millette.info"
   },
   "scripts": {
-    "prepublish": "node-sass --include-path node_modules/foundation-sites/scss --output public/css scss/style.scss",
-    "sass": "node-sass --include-path node_modules/foundation-sites/scss --output public/css",
+    "sass": "node-sass --include-path node_modules/foundation-sites/scss --output public/css scss/style.scss",
     "lint": "standard"
   },
   "dependencies": {
