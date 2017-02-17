@@ -3,6 +3,38 @@
 Callipyge is a simple tool to help you
 build and maintain beautiful backends.
 
+## Requirements
+### Tools
+This readme uses yarn (instead of npm). To install it:
+
+```
+npm install --global yarn
+```
+
+### Services
+This web engine is designed to work with two online services:
+
+* [now.sh][] as an https web host for node (and docker)
+* [Cloudant][] to host the CouchDB database
+
+Both offer free (but limited) accounts.
+
+#### now.sh
+[now.sh][] offers the simplest node https hosting possible.
+Paid accounts are about 15$/month and let you use your own domain names
+and hide your source files (otherwise they are public).
+
+Make sure you have the now-cli installed:
+
+```
+npm install --global now
+```
+
+#### Cloudant
+[Cloudant][] offers a complete CouchDB service
+(including geo and fulltext search). Usage is measured and
+billed monthly if it's 50$ or over.
+
 ## Step by step
 
 ```
@@ -39,3 +71,5 @@ a .env line in your .gitignore file to prevent it from being shared.
 **This .env file contains your cloudant username and password.**
 
 [Foundation]: <http://foundation.zurb.com/sites/docs/kitchen-sink.html>
+[now.sh]: <https://zeit.co/now>
+[Cloudant]: <https://cloudant.com/>
