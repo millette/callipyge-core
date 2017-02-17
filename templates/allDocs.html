@@ -1,6 +1,4 @@
-<html lang="en">
 <%= partials.head(data) %>
-<body>
 <h1>Callipyge <small>content</small></h1>
 <p>Allô <%- data.credentials.name %>.</p>
 <%= partials.adminMenu(data) %>
@@ -8,5 +6,4 @@
 <% data.pre.docs.forEach((doc) => { %>
 <%= partials.doc({ doc: doc, teaser: true, credentials: data.credentials }) %>
 <% }) %>
-</body>
-</html>
+<%= partials.foot(data) %>

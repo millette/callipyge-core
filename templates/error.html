@@ -1,8 +1,5 @@
-<html lang="en">
 <%= partials.head(data) %>
-<body>
 <h1>Callipyge error</h1>
 <h2><%- data.errorTitle %> <small><%- data.statusCode %></small></h2>
 <p><%- data.errorMessage %></p>
-</body>
-</html>
+<%= partials.foot(data) %>
