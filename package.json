@@ -21,7 +21,7 @@
     "lint": "standard"
   },
   "dependencies": {
-    "callipyge-cloudant": "^0.3.0",
+    "callipyge-cloudant": "^0.4.0",
     "color-hash": "^1.0.3",
     "dotenv-safe": "^4.0.3",
     "foundation-sites": "^6.3.0",
