@@ -232,9 +232,9 @@ caller-path@^0.1.0:
   dependencies:
     callsites "^0.2.0"
 
-callipyge-cloudant@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/callipyge-cloudant/-/callipyge-cloudant-0.2.1.tgz#74b278cdf10b5d5ba19d9e818ccfbdcc22f44dea"
+callipyge-cloudant@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/callipyge-cloudant/-/callipyge-cloudant-0.3.0.tgz#6e17b03b3cc98e8ab1ff4762afa3c9b923674ea4"
   dependencies:
     boom "^4.2.0"
     got "^6.7.1"
