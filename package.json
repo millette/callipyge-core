@@ -18,13 +18,12 @@
   },
   "scripts": {
     "sass": "sass",
-    "sass-old": "node-sass --include-path node_modules/foundation-sites/scss --output public/css scss/style.scss",
     "lint": "standard"
   },
   "dependencies": {
     "foundation-sites": "^6.3.0",
     "node-sass": "^4.5.0",
-    "callipyge-cloudant": "^0.2.0",
+    "callipyge-cloudant": "^0.2.1",
     "dotenv-safe": "^4.0.3",
     "glob": "^7.1.1",
     "got": "^6.7.1",

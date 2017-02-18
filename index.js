@@ -31,6 +31,19 @@ See ${e.sample} for details.
   process.exit(10)
 }
 
+/*
+const transform = (doc) => {
+  // console.log('doc:', doc)
+  if (!doc.tags || typeof doc.tags === 'string') { return doc }
+  const tags = []
+  for (let r in doc.tags) {
+    tags.push(doc.tags[r])
+  }
+  doc.tags = tags.join(', ')
+  return doc
+}
+*/
+
 const defaultHandler = function (request, reply) {
   if (!request.query.debug) { return reply.view('default') }
 
@@ -119,6 +132,7 @@ module.exports = (init) => {
       {
         register: callipygeCloudant,
         options: {
+          // transform: transform,
           username: process.env.CLOUDANT_USERNAME,
           password: process.env.CLOUDANT_PASSWORD,
           dbName: process.env.CLOUDANT_DATABASE
@@ -137,6 +151,7 @@ module.exports = (init) => {
       _id: joi.string().allow(''),
       action: joi.string().required(),
       title: joi.string().required(),
+      tags: joi.string().allow(''),
       content: joi.string().allow('')
     })
 
@@ -145,6 +160,7 @@ module.exports = (init) => {
       _id: joi.string().required(),
       action: joi.string().required(),
       title: joi.string().required(),
+      tags: joi.string().allow(''),
       content: joi.string().allow('')
     })
 
@@ -155,16 +171,25 @@ module.exports = (init) => {
     const adminHandler = adminHandlers.bind(this, 'admin', {})
 
     const newDocPost = function (request, reply) {
-      if (!request.payload._id) {
-        request.payload._id = utils.slug(request.payload.title)
-      }
-
       if (request.payload.action === 'copy') {
         reply({ copy: request.payload._id })
       } else if (request.payload.action === 'delete') {
         console.log('must implement delete')
         reply({ 'delete': request.payload._id })
       } else {
+        if (!request.payload._id) {
+          request.payload._id = utils.slug(request.payload.title)
+        }
+        if (request.payload.tags) {
+          const tags = {}
+          request.payload.tags
+            .split(',')
+            .map((x) => x.trim())
+            .forEach((x) => {
+              tags[utils.slug(x)] = x
+            })
+          request.payload.tagsObject = tags
+        }
         delete request.payload.action
         request.payload.updatedAt = new Date().toISOString()
         request.payload.createdAt = request.pre.doc && request.pre.doc.createdAt || request.payload.updatedAt
@@ -199,6 +224,10 @@ module.exports = (init) => {
             required: true
           },
           {
+            label: 'Tags',
+            name: 'tags'
+          },
+          {
             label: 'Content',
             name: 'content',
             type: 'textarea'
@@ -227,6 +256,20 @@ module.exports = (init) => {
       }
     }
 
+    const getDoc = function (request, reply) {
+      server.methods.cloudant.getDoc(request, reply)
+      /*
+      const x = server.methods.cloudant.getDoc(request, reply)
+      console.log('X:', x)
+      process.nextTick((req) => {
+        console.log('prekeys:', Object.keys(request.pre))
+        console.log('pre.doc:', request.pre.doc)
+        console.log('prekeys2:', Object.keys(req.pre))
+        console.log('pre.doc2:', req.pre.doc)
+      }, request)
+      */
+    }
+
     const auth = {
       strategy: 'password',
       mode: 'required'
@@ -252,7 +295,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'doc/{docid}',
       config: {
-        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }]
+        pre: [{ method: getDoc, assign: 'doc' }]
       },
       handler: function (request, reply) {
         reply.view('doc', { pre: request.pre })
@@ -277,7 +320,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'admin/new/doc',
       config: {
-        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }],
+        pre: [{ method: getDoc, assign: 'doc' }],
         auth: auth
       },
       handler: adminNewDocHandler
@@ -297,7 +340,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'admin/edit/{docid}',
       config: {
-        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }],
+        pre: [{ method: getDoc, assign: 'doc' }],
         auth: auth
       },
       handler: adminNewDocHandler
@@ -308,7 +351,7 @@ module.exports = (init) => {
       path: 'admin/edit/{docid}',
       config: {
         pre: [
-          { method: server.methods.cloudant.getDoc, assign: 'doc' },
+          { method: getDoc, assign: 'doc' },
           { method: newDocPost, assign: 'newDocPosted' }
         ],
         validate: { payload: docSchema },
