@@ -22,11 +22,11 @@
     <dt>Updated at</dt><dd><%- data.doc.updatedAt %></dd>
     <% } %>
   </dl>
-  <% if (data.doc.tagsObject) { %>
+  <% if (data.doc.tags && data.doc.tags.length) { %>
   <ul class="inline">
-    <% for (var r in data.doc.tagsObject) { %>
-    <li style="background: <%- data.doc.tagsObject[r].color %>;" class="label <%- r %>"><%- data.doc.tagsObject[r].text %></li>
-    <% } %>
+    <% data.doc.tags.forEach((tag) => { %>
+    <li style="background: <%- tag.color %>;" class="label <%- tag.key %>"><%- tag.text %></li>
+    <% }) %>
   </ul>
   <% } %>
   <div>

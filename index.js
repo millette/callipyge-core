@@ -18,12 +18,16 @@ const utils = require('./lib/utils')
 const colorHash = new ColorHash()
 
 const tagColor = (tag) => {
+  tag.color = colorHash.hex(tag.key)
+  return tag
+/*
   for (let r in tag) {
     tag[r] = {
       text: tag[r],
       color: colorHash.hex(r)
     }
   }
+*/
 }
 
 try {
@@ -43,9 +47,15 @@ See ${e.sample} for details.
   process.exit(10)
 }
 
-/*
 const transform = (doc) => {
   // console.log('doc:', doc)
+  if (!doc.tags) { return doc }
+
+  doc.tagsString = doc.tags
+    .map((tag) => tag.text)
+    .join(', ')
+  return doc
+  /*
   if (!doc.tags || typeof doc.tags === 'string') { return doc }
   const tags = []
   for (let r in doc.tags) {
@@ -53,8 +63,8 @@ const transform = (doc) => {
   }
   doc.tags = tags.join(', ')
   return doc
+  */
 }
-*/
 
 const defaultHandler = function (request, reply) {
   if (!request.query.debug) { return reply.view('default') }
@@ -144,7 +154,7 @@ module.exports = (init) => {
       {
         register: callipygeCloudant,
         options: {
-          // transform: transform,
+          transform: transform,
           username: process.env.CLOUDANT_USERNAME,
           password: process.env.CLOUDANT_PASSWORD,
           dbName: process.env.CLOUDANT_DATABASE
@@ -180,7 +190,9 @@ module.exports = (init) => {
       if (request.pre.docs && request.pre.docs.length) {
         request.pre.docs = request.pre.docs
           .map((doc) => {
-            if (doc.tagsObject) { tagColor(doc.tagsObject) }
+            if (doc.tags) {
+              doc.tags = doc.tags.map(tagColor)
+            }
             return doc
           })
       }
@@ -200,14 +212,16 @@ module.exports = (init) => {
           request.payload._id = utils.slug(request.payload.title)
         }
         if (request.payload.tags) {
-          const tags = {}
-          request.payload.tags
+          request.payload.tags = request.payload.tags
             .split(',')
             .map((x) => x.trim())
-            .forEach((x) => {
-              tags[utils.slug(x)] = x
+            .filter((x) => x)
+            .map((x) => {
+              return {
+                key: utils.slug(x),
+                text: x
+              }
             })
-          request.payload.tagsObject = tags
         }
         delete request.payload.action
         request.payload.updatedAt = new Date().toISOString()
@@ -263,6 +277,10 @@ module.exports = (init) => {
           }
 
           formItems.map((item) => {
+            if (item.name === 'tags') {
+              item.value = request.pre.doc.tagsString
+              return item
+            }
             if (request.pre.doc[item.name] !== undefined) {
               item.value = request.pre.doc[item.name]
             }
@@ -317,8 +335,8 @@ module.exports = (init) => {
         pre: [{ method: getDoc, assign: 'doc' }]
       },
       handler: function (request, reply) {
-        if (request.pre.doc && request.pre.doc.tagsObject) {
-          tagColor(request.pre.doc.tagsObject)
+        if (request.pre.doc && request.pre.doc.tags) {
+          request.pre.doc.tags = request.pre.doc.tags.map(tagColor)
         }
         reply.view('doc', { pre: request.pre })
       }
