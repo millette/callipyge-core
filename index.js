@@ -187,6 +187,7 @@ module.exports = (init) => {
     })
 
     const adminContentHandler = function (request, reply) {
+      if (request.pre.tagDocs) { request.pre.docs = request.pre.tagDocs.docs }
       if (request.pre.docs && request.pre.docs.length) {
         request.pre.docs = request.pre.docs
           .map((doc) => {
@@ -357,6 +358,19 @@ module.exports = (init) => {
       handler: adminContentHandler
     })
 
+    const getTagDocs = function (request, reply) {
+      reply(server.methods.cloudant.find({ selector: { tags: { $elemMatch: { key: request.params.tag } } } }, true))
+    }
+
+    init.options.routes.push({
+      path: 'admin/content/{tag}',
+      config: {
+        auth: auth,
+        pre: [{ method: getTagDocs, assign: 'tagDocs' }]
+      },
+      handler: adminContentHandler
+    })
+
     init.options.routes.push({
       path: 'admin/new/doc',
       config: {
@@ -425,10 +439,17 @@ module.exports = (init) => {
     return server.start()
   }
 
+  const dbSetup = () =>
+    server.methods.cloudant.createIndex({
+      index: { fields: [{ name: 'tags.[].key', type: 'string' }] },
+      type: 'text'
+    }, true)
+
   try {
     server.connection({ port, host })
     return utils.setupLodashVision(server, init.options.views)
       .then(register)
+      .then(dbSetup)
       .then(initialize)
       .then(running)
   } catch (e) { return Promise.reject(e) }
