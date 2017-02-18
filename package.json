@@ -21,10 +21,10 @@
     "lint": "standard"
   },
   "dependencies": {
-    "foundation-sites": "^6.3.0",
-    "node-sass": "^4.5.0",
     "callipyge-cloudant": "^0.2.1",
+    "color-hash": "^1.0.3",
     "dotenv-safe": "^4.0.3",
+    "foundation-sites": "^6.3.0",
     "glob": "^7.1.1",
     "got": "^6.7.1",
     "hapi": "^16.1.0",
@@ -36,6 +36,7 @@
     "joi": "^10.2.2",
     "lodash-vision": "^0.2.0",
     "lout": "^9.2.0",
+    "node-sass": "^4.5.0",
     "update-notifier": "^2.0.0",
     "vision": "^4.1.1"
   },
