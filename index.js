@@ -9,10 +9,22 @@ const inert = require('inert')
 const hapiPassword = require('hapi-password')
 const hapiCredentials = require('hapi-context-credentials')
 const hapiError = require('hapi-error')
+const ColorHash = require('color-hash')
 
 // self
 const pkg = require('./package.json')
 const utils = require('./lib/utils')
+
+const colorHash = new ColorHash()
+
+const tagColor = (tag) => {
+  for (let r in tag) {
+    tag[r] = {
+      text: tag[r],
+      color: colorHash.hex(r)
+    }
+  }
+}
 
 try {
   require('dotenv-safe').load({ sample: [__dirname, '.env.required'].join('/') })
@@ -165,6 +177,13 @@ module.exports = (init) => {
     })
 
     const adminContentHandler = function (request, reply) {
+      if (request.pre.docs && request.pre.docs.length) {
+        request.pre.docs = request.pre.docs
+          .map((doc) => {
+            if (doc.tagsObject) { tagColor(doc.tagsObject) }
+            return doc
+          })
+      }
       return adminHandlers('allDocs', { pre: request.pre }, request, reply)
     }
 
@@ -298,6 +317,9 @@ module.exports = (init) => {
         pre: [{ method: getDoc, assign: 'doc' }]
       },
       handler: function (request, reply) {
+        if (request.pre.doc && request.pre.doc.tagsObject) {
+          tagColor(request.pre.doc.tagsObject)
+        }
         reply.view('doc', { pre: request.pre })
       }
     })
