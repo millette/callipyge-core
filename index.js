@@ -289,19 +289,22 @@ module.exports = (init) => {
       reply(server.methods.cloudant.find({ selector: { tags: { $elemMatch: { key: request.params.tag || 'sys-fp' } } } }, true))
     }
 
-    const frontPage = function (request, reply) {
-      adminContentHandler(request, reply)
-    }
-
     if (!init.options.routes || !init.options.routes.length) {
       init.options.routes = [{
-        path: '/{tag?}',
-        config: {
-          pre: [{ method: getTagDocs, assign: 'tagDocs' }]
-        },
-        handler: frontPage
+        path: '/',
+        handler: function (request, reply) {
+          reply(server.inject({ url: '/tag' }).then((x) => x.result))
+        }
       }]
     }
+
+    init.options.routes.push({
+      path: 'tag/{tag?}',
+      config: {
+        pre: [{ method: getTagDocs, assign: 'tagDocs' }]
+      },
+      handler: adminContentHandler
+    })
 
     init.options.routes.push({
       path: 'assets/{path*}',
@@ -329,6 +332,21 @@ module.exports = (init) => {
         }
         reply.view('doc', { pre: request.pre })
       }
+    })
+
+    const tagsHandler = function (request, reply) {
+      request.server.inject({ allowInternals: true, url: '/cloudant.private/_design/tags/_view/tags?group_level=2' })
+        .then((a) => {
+          if (a.statusCode <= 100 || a.statusCode >= 400) {
+            return reply(boom.create(a.statusCode, a.result.reason, a.result))
+          }
+          reply.view('tags', a.result)
+        })
+    }
+
+    init.options.routes.push({
+      path: 'tags',
+      handler: tagsHandler
     })
 
     init.options.routes.push({
