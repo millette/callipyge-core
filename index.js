@@ -20,14 +20,6 @@ const colorHash = new ColorHash()
 const tagColor = (tag) => {
   tag.color = colorHash.hex(tag.key)
   return tag
-/*
-  for (let r in tag) {
-    tag[r] = {
-      text: tag[r],
-      color: colorHash.hex(r)
-    }
-  }
-*/
 }
 
 try {
@@ -48,22 +40,11 @@ See ${e.sample} for details.
 }
 
 const transform = (doc) => {
-  // console.log('doc:', doc)
   if (!doc.tags) { return doc }
-
   doc.tagsString = doc.tags
     .map((tag) => tag.text)
     .join(', ')
   return doc
-  /*
-  if (!doc.tags || typeof doc.tags === 'string') { return doc }
-  const tags = []
-  for (let r in doc.tags) {
-    tags.push(doc.tags[r])
-  }
-  doc.tags = tags.join(', ')
-  return doc
-  */
 }
 
 const defaultHandler = function (request, reply) {
@@ -165,7 +146,11 @@ module.exports = (init) => {
 
   const initialize = () => {
     const adminHandlers = function (tpl, ctx, request, reply) {
-      ctx.adminMenu = { active: request.url.pathname }
+      if (request.params.tag) {
+        ctx.adminMenu = { active: '/admin/content' }
+      } else {
+        ctx.adminMenu = { active: request.url.pathname }
+      }
       reply.view(tpl, ctx)
     }
 
@@ -187,7 +172,10 @@ module.exports = (init) => {
     })
 
     const adminContentHandler = function (request, reply) {
-      if (request.pre.tagDocs) { request.pre.docs = request.pre.tagDocs.docs }
+      if (request.pre.tagDocs) {
+        request.pre.tagDocs.tag = request.params.tag
+        request.pre.docs = request.pre.tagDocs.docs
+      }
       if (request.pre.docs && request.pre.docs.length) {
         request.pre.docs = request.pre.docs
           .map((doc) => {
@@ -294,20 +282,6 @@ module.exports = (init) => {
       }
     }
 
-    const getDoc = function (request, reply) {
-      server.methods.cloudant.getDoc(request, reply)
-      /*
-      const x = server.methods.cloudant.getDoc(request, reply)
-      console.log('X:', x)
-      process.nextTick((req) => {
-        console.log('prekeys:', Object.keys(request.pre))
-        console.log('pre.doc:', request.pre.doc)
-        console.log('prekeys2:', Object.keys(req.pre))
-        console.log('pre.doc2:', req.pre.doc)
-      }, request)
-      */
-    }
-
     const auth = {
       strategy: 'password',
       mode: 'required'
@@ -333,7 +307,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'doc/{docid}',
       config: {
-        pre: [{ method: getDoc, assign: 'doc' }]
+        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }]
       },
       handler: function (request, reply) {
         if (request.pre.doc && request.pre.doc.tags) {
@@ -374,7 +348,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'admin/new/doc',
       config: {
-        pre: [{ method: getDoc, assign: 'doc' }],
+        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }],
         auth: auth
       },
       handler: adminNewDocHandler
@@ -394,7 +368,7 @@ module.exports = (init) => {
     init.options.routes.push({
       path: 'admin/edit/{docid}',
       config: {
-        pre: [{ method: getDoc, assign: 'doc' }],
+        pre: [{ method: server.methods.cloudant.getDoc, assign: 'doc' }],
         auth: auth
       },
       handler: adminNewDocHandler
@@ -405,7 +379,7 @@ module.exports = (init) => {
       path: 'admin/edit/{docid}',
       config: {
         pre: [
-          { method: getDoc, assign: 'doc' },
+          { method: server.methods.cloudant.getDoc, assign: 'doc' },
           { method: newDocPost, assign: 'newDocPosted' }
         ],
         validate: { payload: docSchema },
@@ -449,7 +423,7 @@ module.exports = (init) => {
     server.connection({ port, host })
     return utils.setupLodashVision(server, init.options.views)
       .then(register)
-      .then(dbSetup)
+//      .then(dbSetup)
       .then(initialize)
       .then(running)
   } catch (e) { return Promise.reject(e) }
