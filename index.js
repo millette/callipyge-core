@@ -423,17 +423,10 @@ module.exports = (init) => {
     return server.start()
   }
 
-  const dbSetup = () =>
-    server.methods.cloudant.createIndex({
-      index: { fields: [{ name: 'tags.[].key', type: 'string' }] },
-      type: 'text'
-    }, true)
-
   try {
     server.connection({ port, host })
     return utils.setupLodashVision(server, init.options.views)
       .then(register)
-//      .then(dbSetup)
       .then(initialize)
       .then(running)
   } catch (e) { return Promise.reject(e) }
