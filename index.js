@@ -1,6 +1,7 @@
 'use strict'
 
 // npm
+const _ = require('lodash')
 const Hapi = require('hapi')
 const callipygeCloudant = require('callipyge-cloudant')
 const joi = require('joi')
@@ -20,6 +21,19 @@ const colorHash = new ColorHash()
 const tagColor = (tag) => {
   tag.color = colorHash.hex(tag.key)
   return tag
+}
+
+const findToTags = (rows) => {
+  const objs = []
+
+  _.each(_.groupBy(rows, (x) => x.key[0]), (v, k) => {
+    objs.push(tagColor({
+      key: k,
+      url: '/tag/' + k,
+      text: v.map((x) => `${x.key[1]} (${x.value})`).join(', ')
+    }))
+  })
+  return objs
 }
 
 try {
@@ -340,7 +354,7 @@ module.exports = (init) => {
           if (a.statusCode <= 100 || a.statusCode >= 400) {
             return reply(boom.create(a.statusCode, a.result.reason, a.result))
           }
-          reply.view('tags', a.result)
+          reply.view('tags', { rows: findToTags(a.result.rows) })
         })
     }
 

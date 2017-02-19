@@ -1,4 +1,10 @@
 <%= partials.head(data) %>
 <h1>Callipyge <small>Tags</small></h1>
-<pre><%- JSON.stringify(data, null, '  ') %></pre>
+<% if (data.rows && data.rows.length) { %>
+<p>
+<% data.rows.forEach((row) => { %>
+  <a href="<%- row.url %>" class="button <%- row.key %>" style="background: <%- row.color %>"><%- row.text %></a>
+<% }) %>
+</p>
+<% } %>
 <%= partials.foot(data) %>
