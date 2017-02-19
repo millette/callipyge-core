@@ -22,4 +22,6 @@ try {
     process.argv[2] = 'help'
   }
   commands[process.argv[2]](process.argv.slice(3))
+    .then((x) => { if (x) { console.error('cli result:', x) } })
+    .catch((e) => { console.error('cli error:', e) })
 } catch (e) { cli.mainCatch(e) }
