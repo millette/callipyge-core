@@ -2,3 +2,9 @@
 @import 'foundation';
 
 @include foundation-everything;
+
+dl.inline dt {
+  float: left;
+  width: 7em;
+  clear: both;
+}

@@ -4379,3 +4379,8 @@ a.thumbnail {
 
 .clearfix::after {
   clear: both; }
+
+dl.inline dt {
+  float: left;
+  width: 7em;
+  clear: both; }
