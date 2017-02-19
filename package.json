@@ -17,7 +17,7 @@
     "url": "http://robin.millette.info"
   },
   "scripts": {
-    "sass": "sass",
+    "sass": "scripts/sass.sh",
     "lint": "standard"
   },
   "dependencies": {
