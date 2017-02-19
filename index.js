@@ -179,9 +179,7 @@ module.exports = (init) => {
       if (request.pre.docs && request.pre.docs.length) {
         request.pre.docs = request.pre.docs
           .map((doc) => {
-            if (doc.tags) {
-              doc.tags = doc.tags.map(tagColor)
-            }
+            if (doc.tags) { doc.tags = doc.tags.map(tagColor) }
             return doc
           })
       }
@@ -287,7 +285,23 @@ module.exports = (init) => {
       mode: 'required'
     }
 
-    if (!init.options.routes || !init.options.routes.length) { init.options.routes = ['/'] }
+    const getTagDocs = function (request, reply) {
+      reply(server.methods.cloudant.find({ selector: { tags: { $elemMatch: { key: request.params.tag || 'sys-fp' } } } }, true))
+    }
+
+    const frontPage = function (request, reply) {
+      adminContentHandler(request, reply)
+    }
+
+    if (!init.options.routes || !init.options.routes.length) {
+      init.options.routes = [{
+        path: '/{tag?}',
+        config: {
+          pre: [{ method: getTagDocs, assign: 'tagDocs' }]
+        },
+        handler: frontPage
+      }]
+    }
 
     init.options.routes.push({
       path: 'assets/{path*}',
@@ -331,10 +345,6 @@ module.exports = (init) => {
       },
       handler: adminContentHandler
     })
-
-    const getTagDocs = function (request, reply) {
-      reply(server.methods.cloudant.find({ selector: { tags: { $elemMatch: { key: request.params.tag } } } }, true))
-    }
 
     init.options.routes.push({
       path: 'admin/content/{tag}',

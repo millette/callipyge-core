@@ -1,9 +1,16 @@
 <%= partials.head(data) %>
 <h1>Callipyge <small>content</small></h1>
+<% if (data.credentials) { %>
 <p>Allô <%- data.credentials.name %>.</p>
 <%= partials.adminMenu(data) %>
-<!-- pre><%- JSON.stringify(data, null, '  ') %></pre -->
-<h2><%- data.pre.tagDocs && data.pre.tagDocs.tag || 'All docs' %></h2>
+<% } %>
+<% if (data.pre.tagDocs) { %>
+<% if (data.pre.tagDocs.tag) { %>
+<h2><%- data.pre.tagDocs.tag %></h2>
+<% } %>
+<% } else { %>
+<h2>All docs</h2>
+<% } %>
 <% data.pre.docs.forEach((doc) => { %>
 <%= partials.doc({ doc: doc, teaser: true, credentials: data.credentials }) %>
 <% }) %>
