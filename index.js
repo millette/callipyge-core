@@ -8,6 +8,7 @@ const joi = require('joi')
 const lout = require('lout')
 const inert = require('inert')
 const hapiPassword = require('hapi-password')
+const hapiInfo = require('hapi-info')
 const hapiCredentials = require('hapi-context-credentials')
 const hapiError = require('hapi-error')
 const ColorHash = require('color-hash')
@@ -131,12 +132,21 @@ module.exports = (init) => {
     return server.register([
       hapiCredentials,
       {
-        register: hapiError,
-        options: { templateName: 'error' }
-      },
-      {
         register: hapiPassword,
         options: authOptions
+      },
+      {
+        register: hapiInfo,
+        options: {
+          auth: {
+            strategy: 'password',
+            mode: 'required'
+          }
+        }
+      },
+      {
+        register: hapiError,
+        options: { templateName: 'error' }
       },
       {
         register: inert,
