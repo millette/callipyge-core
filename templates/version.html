@@ -1,0 +1,18 @@
+<%= partials.head(data) %>
+<h1>Callipyge <small>Version</small></h1>
+<p>Allô <%- data.credentials.name %>.</p>
+<%= partials.adminMenu(data) %>
+<h2>Server</h2>
+<dl class="inline">
+  <dt>Node</dt>
+  <dd><%- data.pre.versions.server.node %></dd>
+  <dt>Hapi</dt>
+  <dd><%- data.pre.versions.server.hapi %></dd>
+</dl>
+<h2>Plugins</h2>
+<ul class="no-bullet">
+<% data.pre.versions.plugins.forEach((plugin) => { %>
+<li><%- plugin.name %> <%- plugin.version %></li>
+<% }) %>
+</ul>
+<%= partials.foot(data) %>

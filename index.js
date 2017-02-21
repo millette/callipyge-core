@@ -195,6 +195,20 @@ module.exports = (init) => {
       content: joi.string().allow('')
     })
 
+    const versionHandler = function (request, reply) {
+      server.inject({
+        url: '/hapi-info',
+        credentials: { name: request.auth.credentials.name }
+      })
+        .then((x) => {
+          reply(x.result)
+        })
+    }
+
+    const adminVersionHandler = function (request, reply) {
+      return adminHandlers('version', { pre: request.pre }, request, reply)
+    }
+
     const adminContentHandler = function (request, reply) {
       if (request.pre.tagDocs) {
         request.pre.tagDocs.tag = request.params.tag
@@ -395,6 +409,15 @@ module.exports = (init) => {
         pre: [{ method: getTagDocs, assign: 'tagDocs' }]
       },
       handler: adminContentHandler
+    })
+
+    init.options.routes.push({
+      path: 'admin/version',
+      config: {
+        pre: [{ method: versionHandler, assign: 'versions' }],
+        auth: auth
+      },
+      handler: adminVersionHandler
     })
 
     init.options.routes.push({
