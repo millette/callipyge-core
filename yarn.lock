@@ -962,6 +962,13 @@ hapi-error@^1.7.0:
   dependencies:
     hoek "^4.1.0"
 
+"hapi-info@github:millette/hapi-info#merged":
+  version "2.0.3"
+  resolved "https://codeload.github.com/millette/hapi-info/tar.gz/f69dfad186bb991388322fa7c30de88b058ec991"
+  dependencies:
+    hoek "4.x.x"
+    joi "10.x.x"
+
 "hapi-password@github:millette/hapi-password#mode":
   version "3.4.0"
   resolved "https://codeload.github.com/millette/hapi-password/tar.gz/323cd4effb26c71c5783458817f0f821dd594e88"

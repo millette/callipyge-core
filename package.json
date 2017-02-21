@@ -30,6 +30,7 @@
     "hapi": "^16.1.0",
     "hapi-context-credentials": "^2.0.0",
     "hapi-error": "^1.7.0",
+    "hapi-info": "github:millette/hapi-info#merged",
     "hapi-password": "github:millette/hapi-password#mode",
     "inert": "^4.1.0",
     "inquirer": "^3.0.1",
