@@ -33,7 +33,7 @@
     "hapi-info": "github:millette/hapi-info#merged",
     "hapi-password": "github:millette/hapi-password#mode",
     "inert": "^4.1.0",
-    "inquirer": "^3.0.1",
+    "inquirer": "^3.0.4",
     "joi": "^10.2.2",
     "lodash-vision": "^0.2.0",
     "lout": "^9.2.0",
