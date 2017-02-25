@@ -969,9 +969,9 @@ hapi-error@^1.7.0:
     hoek "4.x.x"
     joi "10.x.x"
 
-"hapi-password@github:millette/hapi-password#mode":
-  version "3.4.0"
-  resolved "https://codeload.github.com/millette/hapi-password/tar.gz/323cd4effb26c71c5783458817f0f821dd594e88"
+hapi-password@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/hapi-password/-/hapi-password-4.0.0.tgz#23f2bc1d878867a6652676f6fbfff6f26d856cbf"
   dependencies:
     handlebars "^4.0.5"
     hapi "^16.0.2"
