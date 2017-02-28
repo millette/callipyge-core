@@ -39,7 +39,8 @@ billed monthly if it's 50$ or over.
 
 ```
 cd [somewhere]
-mkdir my-project
+mkdir my-project # or whatever name you choose
+cd my-project # or whatever name you choose
 yarn init -y
 yarn add callipyge-core
 node_modules/.bin/callipyge init
