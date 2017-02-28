@@ -11,6 +11,11 @@ This readme uses yarn (instead of npm). To install it:
 npm install --global yarn
 ```
 
+### Node 6
+We use node 6.x for this project. If you don't have it installed,
+I recommend https://github.com/mklement0/n-install to grab
+n, the Node.js version manager.
+
 ### Services
 This web engine is designed to work with two online services:
 
