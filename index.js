@@ -6,6 +6,7 @@ const Hapi = require('hapi')
 const callipygeCloudant = require('callipyge-cloudant')
 const joi = require('joi')
 const lout = require('lout')
+const boom = require('boom')
 const inert = require('inert')
 const hapiPassword = require('hapi-password')
 const hapiInfo = require('hapi-info')
@@ -122,6 +123,7 @@ module.exports = (init) => {
   const register = () => {
     const authOptions = {
       mode: false,
+      // salt: '...',
       password: {}
     }
 
@@ -250,7 +252,7 @@ module.exports = (init) => {
         }
         delete request.payload.action
         request.payload.updatedAt = new Date().toISOString()
-        request.payload.createdAt = request.pre.doc && request.pre.doc.createdAt || request.payload.updatedAt
+        request.payload.createdAt = (request.pre.doc && request.pre.doc.createdAt) || request.payload.updatedAt
         reply(server.methods.cloudant.post(request.payload, true))
       }
     }
