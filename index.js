@@ -123,7 +123,7 @@ module.exports = (init) => {
   const register = () => {
     const authOptions = {
       mode: false,
-      // salt: '...',
+      salt: 'npépé',
       password: {}
     }
 
@@ -491,7 +491,7 @@ module.exports = (init) => {
   }
 
   try {
-    server.connection({ port, host })
+    server.connection({ port, host, state: { isSecure: false } })
     return utils.setupLodashVision(server, init.options.views)
       .then(register)
       .then(initialize)

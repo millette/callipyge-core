@@ -846,11 +846,11 @@ form-data@~2.1.1:
     combined-stream "^1.0.5"
     mime-types "^2.1.12"
 
-foundation-sites@^6.3.0:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/foundation-sites/-/foundation-sites-6.3.0.tgz#19b2d6e5edced8418a4a7b4a1d65287ee1c8d512"
+foundation-sites@^6.3.1:
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/foundation-sites/-/foundation-sites-6.3.1.tgz#23853372deb9480c13b426499eaf0c8f90cdbe1d"
   dependencies:
-    jquery "^2.2.0"
+    jquery ">=2.2.0"
     what-input "^4.0.3"
 
 fs.realpath@^1.0.0:
@@ -1015,9 +1015,9 @@ hapi-error@^1.7.0:
     hoek "4.x.x"
     joi "10.x.x"
 
-hapi-password@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/hapi-password/-/hapi-password-4.0.0.tgz#23f2bc1d878867a6652676f6fbfff6f26d856cbf"
+hapi-password@~4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/hapi-password/-/hapi-password-4.1.0.tgz#9a417ca8a32a1ab6d0f08c2611ab17f049ab5fd8"
   dependencies:
     handlebars "^4.0.5"
     hapi "^16.0.2"
@@ -1178,9 +1178,9 @@ inquirer@^0.12.0:
     strip-ansi "^3.0.0"
     through "^2.3.6"
 
-inquirer@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-3.0.4.tgz#ed9588020edbcc40fc94c50761ad00dcf8598ff5"
+inquirer@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-3.0.5.tgz#172cabc8eacbfb91d595f5d7c354b446b8141f65"
   dependencies:
     ansi-escapes "^1.1.0"
     chalk "^1.0.0"
@@ -1372,9 +1372,9 @@ joi@9.X.X:
     moment "2.x.x"
     topo "2.x.x"
 
-jquery@^2.2.0:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
+jquery@>=2.2.0:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.1.1.tgz#347c1c21c7e004115e0a4da32cece041fad3c8a3"
 
 js-tokens@^3.0.0:
   version "3.0.1"
