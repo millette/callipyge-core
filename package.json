@@ -32,6 +32,7 @@
     "hapi-error": "^1.7.0",
     "hapi-info": "github:millette/hapi-info#merged",
     "hapi-password": "~4.1.0",
+    "hapijs-status-monitor": "^0.5.0",
     "inert": "^4.1.0",
     "inquirer": "^3.0.6",
     "joi": "^10.2.2",
