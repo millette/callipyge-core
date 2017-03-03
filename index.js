@@ -9,6 +9,7 @@ const lout = require('lout')
 const boom = require('boom')
 const inert = require('inert')
 const hapiPassword = require('hapi-password')
+const hapiStatus = require('hapijs-status-monitor')
 const hapiInfo = require('hapi-info')
 const hapiCredentials = require('hapi-context-credentials')
 const hapiError = require('hapi-error')
@@ -136,6 +137,18 @@ module.exports = (init) => {
       {
         register: hapiPassword,
         options: authOptions
+      },
+      {
+        register: hapiStatus,
+        options: {
+          path: '/admin/status',
+          routeConfig: {
+            auth: {
+              strategy: 'password',
+              mode: 'required'
+            }
+          }
+        }
       },
       {
         register: hapiInfo,
