@@ -1658,11 +1658,11 @@ loud-rejection@^1.0.0:
     currently-unhandled "^0.4.1"
     signal-exit "^3.0.0"
 
-lout@^9.2.0:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/lout/-/lout-9.2.0.tgz#fb0e5f69c09752eef64fc35fccf8809fa42e1eef"
+lout@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/lout/-/lout-10.0.0.tgz#2d87a4591d1cb1f07373b3e8a5200bc1c965c2d5"
   dependencies:
-    boom "3.x.x"
+    boom "4.x.x"
     handlebars "4.x.x"
     hoek "4.x.x"
 
